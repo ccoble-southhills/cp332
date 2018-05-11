@@ -1,0 +1,64 @@
+#!/usr/bin/env python
+
+import sys
+import os
+import argparse
+
+
+SOURCE_ROOT = os.path.abspath(os.path.dirname(__file__))
+
+PICTURES = {
+    "dog" : (0, 39456),
+    "flower" : (151928, 70578),
+    "moon" : (222506, 15062),
+    "mountain" : (237568, 72146),
+    "ocean" : (309714, 95947),
+}
+
+def main():
+    args = parse_args()
+    if not args.picture in PICTURES:
+        print("Invalid picture choid:  %s" % args.picture)
+        return 2
+
+    srcpath = os.path.join(SOURCE_ROOT, "picdata")
+    dstpath = getFilename()
+    pic = PICTURES[args.picture]
+    try:
+        extractFile(pic, srcpath, dstpath)
+    except:
+        print("Error")
+        return 1
+
+    print("Picture saved at %s" % dstpath)
+    return 0
+
+
+def parse_args():
+  parser = argparse.ArgumentParser(description="Create JPG pictures.  Available pictures:  " \
+        "'dog', 'flower', 'moon', 'mountain', 'ocean'")
+  parser.add_argument('picture', 
+                      help='Which picture to create, choices listed above.')
+  return parser.parse_args()
+
+
+def extractFile(pic, src, dst):
+    try:
+        with open(src, "rb") as srcfile, open(dst, "wb") as dstfile:
+            srcfile.seek(pic[0])
+            dstfile.write(srcfile.read(pic[1]))
+    except Exception as e:
+        print(e)
+        raise e
+            
+    
+def getFilename():
+    for index in range(0,100000):
+        filename = str("{:05}".format(index)) + ".jpg"
+        path = os.path.join(SOURCE_ROOT, filename)
+        if not os.path.exists(path):
+            return path
+    
+
+if __name__ == '__main__':
+    sys.exit(main())
