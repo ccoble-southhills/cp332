@@ -3,6 +3,7 @@
 import sys
 import os
 import argparse
+import random
 
 
 SOURCE_ROOT = os.path.abspath(os.path.dirname(__file__))
@@ -12,7 +13,7 @@ PICTURES = {
     "flower" : (151928, 70578),
     "moon" : (222506, 15062),
     "mountain" : (237568, 72146),
-    "ocean" : (309714, 95947),
+    "ducks" : (309714, 95947),
 }
 
 def main():
@@ -27,16 +28,16 @@ def main():
     try:
         extractFile(pic, srcpath, dstpath)
     except:
-        print("Error")
+        print("There was an error generating the picture")
         return 1
 
-    print("Picture saved at %s" % dstpath)
+    print("Success:  picture saved at %s" % dstpath)
     return 0
 
 
 def parse_args():
   parser = argparse.ArgumentParser(description="Create JPG pictures.  Available pictures:  " \
-        "'dog', 'flower', 'moon', 'mountain', 'ocean'")
+        "'dog', 'ducks', 'flower', 'moon', 'mountain'")
   parser.add_argument('picture', 
                       help='Which picture to create, choices listed above.')
   return parser.parse_args()
@@ -44,11 +45,14 @@ def parse_args():
 
 def extractFile(pic, src, dst):
     try:
+        # make if fail sometimes
+        if random.randint(1, 2) == 1:
+            src = "abcdefg"
+
         with open(src, "rb") as srcfile, open(dst, "wb") as dstfile:
             srcfile.seek(pic[0])
             dstfile.write(srcfile.read(pic[1]))
     except Exception as e:
-        print(e)
         raise e
             
     
